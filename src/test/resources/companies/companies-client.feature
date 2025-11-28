@@ -6,6 +6,7 @@ Feature: Companies API client
 
     * if (quantity) q._quantity = quantity
     * if (locale) q._locale = locale
+    * if (seed) q._seed = seed
 
     Given url baseUrl + 'companies'
     And params q

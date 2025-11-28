@@ -10,7 +10,7 @@ Feature: FakerAPI Companies - Happy Path Validation
 
 
   Scenario: Default request returns default quantity and valid structure
-    * def res = call client { quantity: null, locale: null }
+    * def res = call client { quantity: null, locale: null, seed: null }
     * def body = res.body
 
     Then match body.status == 'OK'
@@ -26,7 +26,7 @@ Feature: FakerAPI Companies - Happy Path Validation
 
 
   Scenario Outline: Quantity parameter controls number of results
-    * def res = call client { quantity: <quantity>, locale: null }
+    * def res = call client { quantity: <quantity>, locale: null, seed: null }
     * def body = res.body
 
     Then match body.status == 'OK'
@@ -45,7 +45,7 @@ Feature: FakerAPI Companies - Happy Path Validation
 
 
   Scenario: Locale parameter is reflected in response
-    * def res = call client { quantity: 3, locale: 'id_ID' }
+    * def res = call client { quantity: 3, locale: 'id_ID', seed: null }
     * def body = res.body
 
     Then match body.status == 'OK'
@@ -55,3 +55,30 @@ Feature: FakerAPI Companies - Happy Path Validation
 
     * def first = body.data[0]
     And match first == companySchema
+
+
+  Scenario: Seed parameter produces deterministic results
+    * def seedValue = 12345
+
+    * def res1 = call client { quantity: 3, locale: null, seed: seedValue }
+    * def body1 = res1.body
+
+    * def res2 = call client { quantity: 5, locale: null, seed: seedValue }
+    * def body2 = res2.body
+
+    Then match body1.status == 'OK'
+    And match body1.code == 200
+    And match body1.total == 3
+
+    Then match body2.status == 'OK'
+    And match body2.code == 200
+    And match body2.total == 5
+
+
+    And match body1.data[0] == body2.data[0]
+
+    * def first = body1.data[0]
+    And match first == companySchema
+    And match each first.addresses == addressSchema
+    And match first.contact == contactSchema
+    And match first.contact.address == contactAddrSchema
