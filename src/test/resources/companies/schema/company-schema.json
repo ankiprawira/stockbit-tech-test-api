@@ -1,0 +1,12 @@
+{
+  "id": "#number",
+  "name": "#string",
+  "email": "#string",
+  "vat": "#string",
+  "phone": "#string",
+  "country": "#string",
+  "addresses": "#[]",
+  "website": "#string",
+  "image": "#string",
+  "contact": "#object"
+}
